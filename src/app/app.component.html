@@ -1,0 +1,246 @@
+<div class="header-container" fxLayout="row">
+  <svg name="uruit" class="brand-module--icon---PVvJ" width="63" height="17" viewBox="0 0 94 26">
+    <path
+      d="M16.498 1v14.801c0 1.515-.18 3.51-1.131 4.641-.951 1.132-2.552 1.524-4.49 1.526-1.94-.002-3.54-.394-4.491-1.526-.952-1.13-1.131-3.126-1.131-4.64V1H0v17.437c0 1.711.883 3.838 2.285 5.327 1.76 1.87 5.62 2.143 8.609 2.143s6.815-.274 8.575-2.143c1.4-1.489 2.284-3.616 2.284-5.327V1h-5.255zM85.799 25.633h-5.466V5.35h-8.002V1.07h21.543v4.28h-8.075zM64.151 25.633h5.499V1h-5.499zM54.476 7.578h4.837v18.055h-9.118c-1.648 0-3.027-.212-4.142-.634-1.113-.423-1.966-1.12-2.558-2.089-.591-.97-.887-2.268-.887-3.887V7.578h4.8v11.1c0 .732.096 1.325.282 1.782.185.458.51.777.973.96.465.183 1.09.274 1.88.274h2.933V7.578M31.159 25.633h-4.804V7.578h8.143c1.488 0 2.599.207 3.342.616.742.412 1.217.973 1.425 1.68.21.707.315 1.689.315 2.947v2.294h-4.596v-1.438c0-.934-.056-1.559-.172-1.867-.117-.308-.451-.583-.661-.635-.21-.053-.572-.076-.803-.1a12.164 12.164 0 0 0-1.145-.037h-1.045v14.595">
+    </path>
+  </svg> Gilbert Morett Test
+
+
+</div>
+
+<div class="main-container" fxLayout="row">
+
+
+  <div class="main-container-playerA" fxLayout="row" fxFlex="40">
+
+    <div class="main-container-playerA-content">
+
+      <div *ngIf="selectedPlayerA.score >= 0 " class="main-container-playerA-content-score-label">
+        <h3 class="slide-in-left-animation">Game Score: {{selectedPlayerA.score}}</h3>
+      </div>
+      <div>
+        <ng-container *ngIf="!gameStarted; else elsePlayerALabel">
+          <h2 class="slide-in-left-animation">Player 1</h2>
+
+        </ng-container>
+        <ng-template #elsePlayerALabel>
+          <h2 class="slide-in-left-animation">{{selectedPlayerA.nickname}}</h2>
+
+        </ng-template>
+
+        <div *ngIf="gameStarted">
+          <div>
+            <h3 class="slide-in-left-animation">Select Your Move</h3>
+          </div>
+
+          <div class="slide-in-to-center-animation margin-content" fxLayout="row" fxLayoutAlign="space-between ">
+
+
+            <i (click)="onSelecMove('playerA','rock' )"
+              [ngClass]="{'icon-color-selected':( playerAMove === 'rock' || disableMovesPLayerA), 'isDisabled': disableMovesPLayerA}"
+              class="far fa-hand-rock fa-5x icon-color"></i>
+            <i (click)="onSelecMove('playerA','paper' )"
+              [ngClass]="{'icon-color-selected': (playerAMove === 'paper' || disableMovesPLayerA) , 'isDisabled': disableMovesPLayerA}"
+              class="far fa-hand-paper fa-5x icon-color"></i>
+            <i (click)="onSelecMove('playerA','scissor' )"
+              [ngClass]="{'icon-color-selected': (playerAMove === 'scissor' || disableMovesPLayerA) , 'isDisabled': disableMovesPLayerA}"
+              class="far fa-hand-peace fa-5x icon-color"></i>
+          </div>
+
+          <a *ngIf="gameStarted &&  isGameFinished" [ngClass]="{'isDisabled': !playerAMove}" class="brk-btn "
+            (click)="onPlayerConfirmSelection('playerA')">
+            Ok
+          </a>
+
+        </div>
+
+
+
+
+        <a class="brk-btn " (click)="onPlayerMode('playerAMode', 'newPlayer')" *ngIf=" !gameStarted">
+          New Player
+        </a>
+
+        <a class="brk-btn " (click)="onPlayerMode('playerAMode', 'loadPlayer')" *ngIf=" !gameStarted">
+          Load Player
+        </a>
+
+
+      </div>
+      <div class="margin-content" *ngIf="playerModes.playerAMode === 'newPlayer' && !gameStarted">
+        <h3 class="slide-in-left-animation">Enter Player Name</h3>
+
+        <form action="#" class="simple-form">
+          <input class="slide-in-left-animation" [(ngModel)]="selectedPlayerA.nickname" name="selectedPlayerA"
+            type="text" placeholder="Player Name" required>
+
+        </form>
+      </div>
+
+
+      <div class="margin-content" *ngIf="playerModes.playerAMode === 'loadPlayer' && !gameStarted">
+        <h3 class="slide-in-left-animation"> Select a Previous Player</h3>
+
+        <form action="#" class="simple-form">
+          <select class="slide-in-left-animation" [(ngModel)]="selectedPlayerA" name="selectedPlayerA">
+            <option *ngFor="let playerListItem of (playerList$ | async)" [ngValue]="playerListItem">
+              {{playerListItem.nickname}}</option>
+
+
+          </select>
+
+        </form>
+
+
+      </div>
+
+
+    </div>
+  </div>
+  <div fxFlex="20" fxFlexAlign="center">
+
+    <div fxLayout="column">
+
+      <div *ngIf="!gameStarted">
+        <h3>All Time Scores</h3>
+
+        <h3 *ngFor="let item of (winnerAllTimeList$ | async); let i = index">
+          Place {{i+1}}. {{item.nickname}} Score: {{item.score}}
+
+        </h3>
+
+      </div>
+
+      <div *ngIf="gameStarted">
+        <h3>Winner Board</h3>
+
+        <h3 *ngFor="let item of winnerList; let i = index">
+
+          <i *ngIf="item.selectionA === 'paper'" class="far fa-hand-paper  icon-color"></i>
+          <i *ngIf="item.selectionA === 'rock'" class="far fa-hand-rock  icon-color"></i>
+          <i *ngIf="item.selectionA === 'scissor'" class="far fa-hand-peace  icon-color"></i>
+
+          Round {{i+1}} Winner {{item.winner.nickname}}
+
+          <i *ngIf="item.selectionB === 'paper'" class="far fa-hand-paper  icon-color"></i>
+          <i *ngIf="item.selectionB === 'rock'" class="far fa-hand-rock  icon-color"></i>
+          <i *ngIf="item.selectionB === 'scissor'" class="far fa-hand-peace  icon-color"></i>
+
+
+        </h3>
+
+      </div>
+
+      <a *ngIf="!gameStarted" (click)="onStartGame()" class="brk-btn" [ngClass]="{'isDisabled': isStartGameDisabled}">
+        {{isStartGameDisabled ? 'Enter Players To Start Game' : 'Start Game'}}
+      </a>
+
+      <div *ngIf="gameStarted && !isGameFinished">
+
+        <h2>We have a WINNER!!</h2>
+        <h3>
+          {{winnerACount === 3 ? selectedPlayerA.nickname: selectedPlayerB.nickname}} is the new EMPEROR
+        </h3>
+      </div>
+
+      <a *ngIf="gameStarted && !isGameFinished" (click)="restartGame()" class="brk-btn">
+        Play Again
+      </a>
+
+
+
+
+
+    </div>
+
+  </div>
+
+
+  <div class="main-container-playerB" fxLayout="row" fxFlex="40">
+
+    <div class="main-container-playerB-content">
+
+      <div *ngIf="selectedPlayerB.score >= 0 " class="main-container-playerB-content-score-label">
+        <h3 class="slide-in-left-animation">Game Score: {{selectedPlayerB.score}}</h3>
+      </div>
+      <div>
+        <ng-container *ngIf="!gameStarted; else elsePlayerBLabel">
+          <h2 class="slide-in-left-animation">Player 2</h2>
+
+        </ng-container>
+        <ng-template #elsePlayerBLabel>
+          <h2 class="slide-in-left-animation">{{selectedPlayerB.nickname}}</h2>
+
+        </ng-template>
+
+        <div *ngIf="gameStarted">
+          <div>
+            <h3 class="slide-in-left-animation">Select Your Move</h3>
+          </div>
+
+          <div class="slide-in-to-center-animation margin-content" fxLayout="row" fxLayoutAlign="space-between ">
+
+
+            <i (click)="onSelecMove('playerB','rock' )"
+              [ngClass]="{'icon-color-selected': (playerBMove === 'rock' || disableMovesPLayerB), 'isDisabled': disableMovesPLayerB}"
+              class="far fa-hand-rock fa-5x icon-color"></i>
+            <i (click)="onSelecMove('playerB','paper' )"
+              [ngClass]="{'icon-color-selected': (playerBMove === 'paper' || disableMovesPLayerB) , 'isDisabled': disableMovesPLayerB}"
+              class="far fa-hand-paper fa-5x icon-color"></i>
+            <i (click)="onSelecMove('playerB','scissor' )"
+              [ngClass]="{'icon-color-selected': (playerBMove === 'scissor' || disableMovesPLayerB), 'isDisabled': disableMovesPLayerB}"
+              class="far fa-hand-peace fa-5x icon-color"></i>
+          </div>
+
+          <a *ngIf="gameStarted &&  isGameFinished" [ngClass]="{'isDisabled': !playerBMove}" class="brk-btn "
+            (click)="onPlayerConfirmSelection('playerB')">
+            Ok
+          </a>
+
+        </div>
+
+
+
+
+        <a class="brk-btn " (click)="onPlayerMode('playerBMode', 'newPlayer')" *ngIf=" !gameStarted">
+          New Player
+        </a>
+
+        <a class="brk-btn " (click)="onPlayerMode('playerBMode', 'loadPlayer')" *ngIf=" !gameStarted">
+          Load Player
+        </a>
+
+
+      </div>
+      <div class="margin-content" *ngIf="playerModes.playerBMode === 'newPlayer' && !gameStarted">
+        <h3 class="slide-in-left-animation">Enter Player Name</h3>
+
+        <form action="#" class="simple-form">
+          <input class="slide-in-left-animation" [(ngModel)]="selectedPlayerB.nickname" name="selectedPlayerB"
+            type="text" placeholder="Player Name" required>
+
+        </form>
+      </div>
+
+
+      <div class="margin-content" *ngIf="playerModes.playerBMode === 'loadPlayer' && !gameStarted">
+        <h3 class="slide-in-left-animation"> Select a Previous Player</h3>
+
+        <form action="#" class="simple-form">
+          <select class="slide-in-left-animation" [(ngModel)]="selectedPlayerB" name="selectedPlayerB">
+            <option *ngFor="let playerListItem of (playerList$ | async)" [ngValue]="playerListItem">
+              {{playerListItem.nickname}}</option>
+
+
+          </select>
+
+        </form>
+
+
+      </div>
+
+
+    </div>
+  </div>
+
+</div>
