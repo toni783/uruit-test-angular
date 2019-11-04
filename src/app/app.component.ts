@@ -74,6 +74,9 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   onStartGame() {
+    if (this.isStartGameDisabled) {
+      return;
+    }
     this.gameStarted = true;
 
     if (!this.selectedPlayerA.id || !this.selectedPlayerB.id) {
